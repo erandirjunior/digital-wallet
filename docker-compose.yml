@@ -1,0 +1,62 @@
+version: '3.9'
+services:
+  digital_wallet:
+    container_name: digital_wallet
+    build: .
+    ports:
+      - "${APP_PORT}:${APP_PORT}"
+    volumes:
+      - .:/app:rw
+    restart: "no"
+    stdin_open: true
+    tty: true
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    env_file:
+      - .env
+    depends_on:
+      - sqs
+      - mysql
+    networks:
+      - digital-wallet-network
+    links:
+      - sqs:sqs
+  sqs:
+    image: softwaremill/elasticmq
+    container_name: local-sqs
+    ports:
+      - 9324:9324
+      - 9325:9325
+    volumes:
+      - ./elasticmq.conf:/opt/config/elasticmq.conf
+    networks:
+      - digital-wallet-network
+  adminer:
+    image: adminer
+    container_name: adminer_dw
+    ports:
+      - "8081:8080"
+    depends_on:
+      - mysql
+    restart: always
+    networks:
+      - digital-wallet-network
+  mysql:
+    container_name: digital_wallet_db
+    image: mysql:5.7.22
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+    networks:
+      - digital-wallet-network
+    volumes:
+      - dba:/var/lib/mysql
+
+volumes:
+  dba:
+
+networks:
+  digital-wallet-network:
+    driver: bridge
