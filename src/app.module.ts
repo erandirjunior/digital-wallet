@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './user/user.entity';
 import { Transaction } from './operation/transaction.entity';
 import { OperationModule } from './operation/operation.module';
+import { CommandBus } from '@nestjs/cqrs';
 
 @Module({
   imports: [
@@ -16,7 +17,8 @@ import { OperationModule } from './operation/operation.module';
       database: process.env.DB_DATABASE,
       entities: [User, Transaction],
     }),
-    UserModule, OperationModule
-  ],
+    UserModule,
+    OperationModule
+  ]
 })
 export class AppModule {}

@@ -8,88 +8,54 @@ import { CancellationService } from './cancellation/cancellation.service';
 import { CancellationOperationValidation } from './cancellation/cancellation-operation.validation';
 import { ReversalService } from './reversal/reversal.service';
 import { ReversalOperationValidation } from './reversal/reversal-operation.validation';
+import { CommandBus } from '@nestjs/cqrs';
+import { DepositCommand } from './commands/deposit.command';
+import { WithdrawCommand } from './commands/withdraw.command';
+import { BuyCommand } from './commands/buy.command';
+import { CancellationCommand } from './commands/cancellation.command';
+import { ReversalCommand } from './commands/reversal.command';
 
 @Controller()
 export class OperationController {
-    constructor(
-        private readonly depositService: DepositService,
-        private readonly withdrawService: WithdrawService,
-        private readonly buyService: BuyService,
-        private readonly cancellationService: CancellationService,
-        private readonly reversalService: ReversalService
-    ) {}
+    constructor(private commandBus: CommandBus) {}
 
     @Post('deposits')
     async create(@Body() body: BasicOperationValidation, @Res() res) {
-        try {
-            await this.depositService.deposit(body);
-            return res.status(HttpStatus.CREATED).json();
-        } catch (e) {
-            return res.status(HttpStatus.BAD_REQUEST).json({
-                success: true,
-                message: e,
-            });
-        }
+        this.commandBus.execute(
+            new DepositCommand(body)
+        );
+        return res.status(HttpStatus.OK).json();
     }
 
     @Post('withdraws')
     async withdraw(@Body() body: BasicOperationValidation, @Res() res) {
-        try {
-            await this.withdrawService.withdraw(body);
-            return res.status(HttpStatus.CREATED).json();
-        } catch (e) {
-            return res.status(HttpStatus.BAD_REQUEST).json({
-                success: true,
-                message: e,
-            });
-        }
+        this.commandBus.execute(
+            new WithdrawCommand(body)
+        );
+        return res.status(HttpStatus.OK).json();
     }
 
     @Post('buys')
     async buy(@Body() body: BuyOperationValidation, @Res() res) {
-        try {
-            const response = await this.buyService.isDuplicateExternalReference(body);
-
-            if (response) {
-                return res.status(HttpStatus.BAD_REQUEST).json({
-                    success: true,
-                    message: 'Duplicate external reference',
-                });
-            }
-
-            await this.buyService.buy(body);
-            return res.status(HttpStatus.CREATED).json();
-        } catch (e) {
-            return res.status(HttpStatus.BAD_REQUEST).json({
-                success: true,
-                message: e,
-            });
-        }
+        this.commandBus.execute(
+            new BuyCommand(body)
+        );
+        return res.status(HttpStatus.OK).json();
     }
 
     @Post('cancellations')
     async cancellation(@Body() body: CancellationOperationValidation, @Res() res) {
-        try {
-            await this.cancellationService.cancel(body);
-            return res.status(HttpStatus.CREATED).json();
-        } catch (e) {
-            return res.status(HttpStatus.BAD_REQUEST).json({
-                success: true,
-                message: e,
-            });
-        }
+        this.commandBus.execute(
+            new CancellationCommand(body)
+        );
+        return res.status(HttpStatus.OK).json();
     }
 
     @Post('reversals')
     async reversal(@Body() body: ReversalOperationValidation, @Res() res) {
-        try {
-            await this.reversalService.reversal(body);
-            return res.status(HttpStatus.CREATED).json();
-        } catch (e) {
-            return res.status(HttpStatus.BAD_REQUEST).json({
-                success: true,
-                message: e,
-            });
-        }
+        this.commandBus.execute(
+            new ReversalCommand(body)
+        );
+        return res.status(HttpStatus.OK).json();
     }
 }
