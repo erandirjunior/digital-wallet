@@ -1,27 +1,32 @@
 
-interface UserInformation {
+export interface UserInformation {
     readonly account: string;
 
     readonly agency: string;
 }
 
-interface ExternalReference {
-    externalId: string;
-}
-
-export interface OperationDto extends UserInformation {
+export interface SimpleOperationDto extends UserInformation {
     value: number;
 }
 
-export interface BuyDto extends OperationDto, ExternalReference {
-    readonly cardNumber: string;
+export interface UserRegisteredDto extends SimpleOperationDto {
+    id: number;
+}
+
+interface ExternalReference {
+    externalId?: string;
+}
+
+export interface BuyDto extends SimpleOperationDto, ExternalReference {
+    cardNumber: string;
 }
 
 export interface CancellationDto extends UserInformation, ExternalReference {}
 
-export interface ReversalDto extends CancellationDto {}
+export interface OperationDTO extends ExternalReference {
+    userId: number,
 
-export interface OperationRegisteredDto extends ExternalReference {
-    readonly id: number,
-    readonly value: number,
+    value: number;
 }
+
+export interface ReversalDto extends UserInformation, ExternalReference {}

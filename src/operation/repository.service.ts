@@ -3,14 +3,19 @@ import { DataSource, Repository } from 'typeorm';
 import { User } from '../user/user.entity';
 import { Transaction } from './transaction.entity';
 import OperationType from './operation-type';
-import { BuyRepository, DepositRepository, UserAccount } from './dependency.interface';
-import { CancellationRepository } from './cancelled/cancellation.service';
-import { ReversalRepository } from './reversal/reversal.service';
-import { BuyDto, OperationRegisteredDto } from './dto.interface';
+import {
+    BuyRepository, CancellationRepository, /*BuyRepository, CancellationRepository,*/
+    OperationRepository, ReversalRepository/*, ReversalRepository*/
+} from './dependency.interface';
+import {
+    BuyDto,
+    OperationDTO, /*BuyDto, OperationDto, OperationRegisteredDto, UserDto,*/
+    UserInformation,
+    UserRegisteredDto
+} from './dto.interface';
 
 @Injectable()
-export class RepositoryService implements DepositRepository, BuyRepository, CancellationRepository, ReversalRepository {
-
+export class RepositoryService implements OperationRepository, BuyRepository, CancellationRepository, ReversalRepository {
     private userRepository: Repository<User>;
 
     private transactionRepository: Repository<Transaction>;
@@ -19,10 +24,10 @@ export class RepositoryService implements DepositRepository, BuyRepository, Canc
         this.userRepository = dataSource.getRepository(User);
         this.transactionRepository = dataSource.getRepository(Transaction);
     }
-    async getAccount(agency: string, account: string): Promise<UserAccount | null> {
+    async getAccount(basicOperation: UserInformation): Promise<UserRegisteredDto | null> {
         const result = await this.userRepository.findOneBy({
-            account,
-            agency
+            account: basicOperation.account,
+            agency: basicOperation.agency
         });
 
         if (!result) {
@@ -30,24 +35,17 @@ export class RepositoryService implements DepositRepository, BuyRepository, Canc
         }
 
         return {
-            account,
-            agency,
+            ...basicOperation,
             value: result.value,
             id: result.id,
-            externalId: null
         }
     }
 
-    async registerDepositTransaction(dto: UserAccount, operationType: OperationType): Promise<void> {
-        const transaction = new Transaction();
-        transaction.value = dto.value;
-        transaction.userId = dto.id;
-        transaction.externalId = dto.externalId;
-        transaction.type = operationType;
-        await this.transactionRepository.insert(transaction);
+    async registerApprovedOperation(dto: OperationDTO, operationType: OperationType, reason: string): Promise<void> {
+        await this.saveTransaction(dto, operationType, reason, 'approved');
     }
 
-    async updateAccountValue(dto: UserAccount): Promise<void> {
+    async updateAccountValue(dto: UserRegisteredDto): Promise<void> {
         const [result] = await this.userRepository.find({
             where: {
                 id: dto.id
@@ -57,39 +55,47 @@ export class RepositoryService implements DepositRepository, BuyRepository, Canc
         await this.userRepository.save(result);
     }
 
-    async getAccountByBuyData(dto: BuyDto): Promise<UserAccount> {
-        const result = await this.userRepository.findOneBy({
-            account: dto.account,
-            agency: dto.agency,
-            card: +dto.cardNumber
-        });
-
-        return {
-            account: dto.account,
-            agency: dto.agency,
-            value: result.value,
-            id: result.id,
-            externalId: null
-        }
-    }
-
-    async registerCancelledOperation(dto: UserAccount, operationType: OperationType, reason: string): Promise<void> {
-        const transaction = new Transaction();
-        transaction.value = dto.value;
-        transaction.userId = dto.id;
-        transaction.externalId = dto.externalId;
-        transaction.type = operationType;
-        transaction.information = reason;
-        transaction.status = 'cancelled';
-        await this.transactionRepository.insert(transaction);
-    }
-
     async countExternalId(externalId: string): Promise<number> {
         return await this.transactionRepository.count({
             where: {
                 externalId
             }
         });
+    }
+
+    async getAccountByBuyData(dto: BuyDto): Promise<UserRegisteredDto> {
+        const result = await this.userRepository.findOneBy({
+            account: dto.account,
+            agency: dto.agency,
+            card: dto.cardNumber
+        });
+
+        return {
+            account: result.account,
+            agency: result.agency,
+            value: result.value,
+            id: result.id
+        }
+    }
+
+    async registerCancelledOperation(dto: OperationDTO, operationType: OperationType, reason: string): Promise<void> {
+        await this.saveTransaction(dto, operationType, reason, 'cancelled');
+    }
+
+    private async saveTransaction(
+        dto: OperationDTO,
+        operationType: OperationType,
+        reason: string,
+        status: string,
+    ) {
+        const transaction = new Transaction();
+        transaction.value = dto.value;
+        transaction.userId = dto.userId;
+        transaction.externalId = dto.externalId;
+        transaction.type = operationType;
+        transaction.information = reason;
+        transaction.status = status;
+        await this.transactionRepository.insert(transaction);
     }
 
     async cancelOperation(externalId: string): Promise<void> {
@@ -102,7 +108,7 @@ export class RepositoryService implements DepositRepository, BuyRepository, Canc
         await this.transactionRepository.save(result);
     }
 
-    async getOperationByExternalId(externalId: string): Promise<OperationRegisteredDto | null> {
+    async getOperationByExternalId(externalId: string): Promise<OperationDTO | null> {
         const result = await this.transactionRepository.findOneBy({
             externalId,
             status: 'approved',
@@ -114,13 +120,13 @@ export class RepositoryService implements DepositRepository, BuyRepository, Canc
         }
 
         return {
-            value: result.value,
-            id: result.id,
-            externalId
+            userId: result.userId,
+            externalId,
+            value: result.value
         }
     }
 
-    async getCancellationOperationByExternalId(externalId: string): Promise<OperationRegisteredDto | null> {
+    async getCancellationOperationByExternalId(externalId: string): Promise<OperationDTO | null> {
         const result = await this.transactionRepository.findOneBy({
             externalId,
             status: 'approved',
@@ -132,21 +138,10 @@ export class RepositoryService implements DepositRepository, BuyRepository, Canc
         }
 
         return {
+            externalId,
             value: result.value,
-            id: result.id,
-            externalId
+            userId: result.userId
         }
-    }
-
-    async registerApprovedOperation(dto: UserAccount, operationType: OperationType, reason: string): Promise<void> {
-        const transaction = new Transaction();
-        transaction.value = dto.value;
-        transaction.userId = dto.id;
-        transaction.externalId = dto.externalId;
-        transaction.type = operationType;
-        transaction.information = reason;
-        transaction.status = 'approved';
-        await this.transactionRepository.insert(transaction);
     }
 
     async reversalOperationExists(externalId: string): Promise<boolean> {

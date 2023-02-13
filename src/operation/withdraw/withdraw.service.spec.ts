@@ -1,11 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { WithdrawService } from './withdraw.service';
-import { DepositDto, UserAccount } from '../dependency.interface';
+import { SimpleOperationDto, UserRegisteredDto } from '../dto.interface';
 
 describe('WithdrawService', () => {
   let service: WithdrawService;
 
-  const payload: DepositDto = {
+  const payload: SimpleOperationDto = {
     value: 10,
     account: "1234",
     agency: "12345"
@@ -18,10 +18,10 @@ describe('WithdrawService', () => {
   };
 
   const dependencies = {
-    updateAccountValue: (dto: UserAccount) => {
+    updateAccountValue: (dto: UserRegisteredDto) => {
       user.value = dto.value;
     },
-    registerDepositTransaction: jest.fn(() => '')
+    registerApprovedOperation: jest.fn(() => '')
   };
 
   async function getModule(useValues: object) {
@@ -29,7 +29,7 @@ describe('WithdrawService', () => {
       providers: [
         WithdrawService,
         {
-          provide: 'DepositRepository',
+          provide: 'OperationRepository',
           useValue: {
             ...useValues
           }

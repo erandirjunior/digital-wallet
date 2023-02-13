@@ -1,32 +1,38 @@
+import { BuyDto, OperationDTO, UserInformation, UserRegisteredDto } from './dto.interface';
 import OperationType from './operation-type';
-import { BuyDto } from './dto.interface';
 
-export interface DepositDto {
-    readonly account: string;
-
-    readonly agency: string;
-
-    externalId?: string;
-
-    value: number;
+interface UpdateAccount {
+    updateAccountValue(dto: UserRegisteredDto): Promise<void>;
 }
 
-export interface UserAccount extends DepositDto {
-    readonly id: number;
+export interface AccountRepository extends UpdateAccount {
+    getAccount(basicOperation: UserInformation): Promise<UserRegisteredDto | null>;
+
 }
 
-export interface DepositRepository {
-    getAccount(agency: string, account: string): Promise<UserAccount | null>;
-
-    updateAccountValue(dto: UserAccount): Promise<void>;
-
-    registerDepositTransaction(dto: UserAccount, type: OperationType): Promise<void>;
+interface RegisterApprovedOperation {
+    registerApprovedOperation(dto: OperationDTO, operationType: OperationType, reason: string): Promise<void>;
 }
 
-export interface BuyRepository extends DepositRepository {
+interface RegisterCancelledOperation {
+    registerCancelledOperation(dto: OperationDTO, operationType: OperationType, reason: string): Promise<void>;
+}
+
+export interface OperationRepository extends AccountRepository, RegisterApprovedOperation {}
+
+export interface BuyRepository extends RegisterApprovedOperation, RegisterCancelledOperation, UpdateAccount {
     countExternalId(externalId: string): Promise<number>;
 
-    getAccountByBuyData(dto: BuyDto): Promise<UserAccount>;
+    getAccountByBuyData(dto: BuyDto): Promise<UserRegisteredDto>;
+}
+export interface CancellationRepository extends AccountRepository, RegisterApprovedOperation, RegisterCancelledOperation {
+    getOperationByExternalId(externalId: string): Promise<OperationDTO | null>;
 
-    registerCancelledOperation(dto: UserAccount, operationType: OperationType, reason: string): Promise<void>;
+    cancelOperation(externalId: string): Promise<void>;
+}
+
+export interface ReversalRepository extends AccountRepository, RegisterApprovedOperation, RegisterCancelledOperation {
+    reversalOperationExists(externalId: string): Promise<boolean>;
+
+    getCancellationOperationByExternalId(externalId: string): Promise<OperationDTO | null>
 }

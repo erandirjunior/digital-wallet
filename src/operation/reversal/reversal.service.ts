@@ -1,21 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { DepositDto, DepositRepository, UserAccount } from '../dependency.interface';
 import OperationType from '../operation-type';
 import { ReversalDto } from '../dto.interface';
+import { ReversalRepository } from '../dependency.interface';
 
-export interface ReversalRepository {
-    getAccount(agency: string, account: string): Promise<UserAccount | null>
-
-    getCancellationOperationByExternalId(externalId: string): Promise<TransactionDto | null>;
-
-    reversalOperationExists(externalId: string): Promise<boolean>;
-
-    registerApprovedOperation(dto: UserAccount, operationType: OperationType, reason: string): Promise<void>;
-
-    updateAccountValue(dto: UserAccount): Promise<void>;
-
-    registerCancelledOperation(dto: UserAccount, operationType: OperationType, reason: string): Promise<void>
-}
 
 export interface TransactionDto {
     readonly id: number,
@@ -31,14 +18,18 @@ export class ReversalService {
 
 
     async reversal(payload: ReversalDto): Promise<void> {
-        const account = await this.repository.getAccount(payload.agency, payload.account);
+        const account = await this.repository.getAccount(payload);
         const operation = await this.repository.getCancellationOperationByExternalId(payload.externalId);
         const reversalOperation = await this.repository.reversalOperationExists(payload.externalId);
 
         if (!operation || reversalOperation) {
             const value = 0;
             return await await this.repository.registerCancelledOperation(
-                {...account, value},
+                {
+                    userId: account.id,
+                    value,
+                    externalId: payload.externalId
+                },
                 OperationType.REVERSAL,
                 'External reference not found or request already processed!'
             );
@@ -47,14 +38,13 @@ export class ReversalService {
         account.value += operation.value;
         const data = {
             value: operation.value,
-            externalId: operation.externalId
+            externalId: operation.externalId,
+            userId: account.id
         }
-
-        console.log({...account, ...data});
 
         await this.repository.updateAccountValue(account);
         await this.repository.registerApprovedOperation(
-            {...account, ...data}, OperationType.REVERSAL, 'Reversal requested'
+            data, OperationType.REVERSAL, 'Reversal requested'
         );
     }
 }

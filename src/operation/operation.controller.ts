@@ -4,9 +4,10 @@ import { BasicOperationValidation } from './basic-operation.validation';
 import { WithdrawService } from './withdraw/withdraw.service';
 import { BuyOperationValidation } from './buy/buy-operation.validation';
 import { BuyService } from './buy/buy.service';
-import { CancellationService } from './cancelled/cancellation.service';
-import { CancellationOperationValidation } from './cancelled/cancellation-operation.validation';
+import { CancellationService } from './cancellation/cancellation.service';
+import { CancellationOperationValidation } from './cancellation/cancellation-operation.validation';
 import { ReversalService } from './reversal/reversal.service';
+import { ReversalOperationValidation } from './reversal/reversal-operation.validation';
 
 @Controller()
 export class OperationController {
@@ -29,7 +30,6 @@ export class OperationController {
                 message: e,
             });
         }
-
     }
 
     @Post('withdraws')
@@ -43,7 +43,6 @@ export class OperationController {
                 message: e,
             });
         }
-
     }
 
     @Post('buys')
@@ -66,7 +65,6 @@ export class OperationController {
                 message: e,
             });
         }
-
     }
 
     @Post('cancellations')
@@ -80,21 +78,18 @@ export class OperationController {
                 message: e,
             });
         }
-
     }
 
     @Post('reversals')
-    async reversal(@Body() body: CancellationOperationValidation, @Res() res) {
+    async reversal(@Body() body: ReversalOperationValidation, @Res() res) {
         try {
             await this.reversalService.reversal(body);
             return res.status(HttpStatus.CREATED).json();
         } catch (e) {
-            console.log(e)
             return res.status(HttpStatus.BAD_REQUEST).json({
                 success: true,
                 message: e,
             });
         }
-
     }
 }

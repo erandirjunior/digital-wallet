@@ -5,7 +5,7 @@ import { RepositoryService } from './repository.service';
 import { Transaction } from './transaction.entity';
 import { WithdrawService } from './withdraw/withdraw.service';
 import { BuyService } from './buy/buy.service';
-import { CancellationService } from './cancelled/cancellation.service';
+import { CancellationService } from './cancellation/cancellation.service';
 import { ReversalService } from './reversal/reversal.service';
 
 @Module({
@@ -18,7 +18,7 @@ import { ReversalService } from './reversal/reversal.service';
     CancellationService,
     ReversalService,
     {
-      provide: 'DepositRepository',
+      provide: 'OperationRepository',
       useClass: RepositoryService
     },
     {
@@ -35,6 +35,6 @@ import { ReversalService } from './reversal/reversal.service';
     },
     Transaction
   ],
-  exports: ['DepositRepository', 'BuyRepository', 'CancellationRepository', 'ReversalRepository', Transaction]
+  exports: ['OperationRepository', 'BuyRepository', 'CancellationRepository', 'ReversalRepository', Transaction]
 })
 export class OperationModule {}

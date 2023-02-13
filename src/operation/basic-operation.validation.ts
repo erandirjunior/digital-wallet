@@ -1,8 +1,8 @@
 import { IsNumber, Length, Min, MinLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { OperationDto } from './dto.interface';
+import { SimpleOperationDto } from './dto.interface';
 
-export class BasicOperationValidation implements OperationDto {
+export class BasicOperationValidation implements SimpleOperationDto {
     @ApiProperty()
     @Length(5, 5)
     readonly account: string;
@@ -14,5 +14,5 @@ export class BasicOperationValidation implements OperationDto {
     @ApiProperty()
     @Min(0)
     @IsNumber()
-    readonly value: number;
+    value: number;
 }

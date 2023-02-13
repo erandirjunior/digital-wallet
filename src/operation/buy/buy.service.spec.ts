@@ -22,7 +22,7 @@ describe('BuyService', () => {
         ...account
       }
     }),
-    registerDepositTransaction: jest.fn(() => ''),
+    registerApprovedOperation: jest.fn(() => ''),
     registerCancelledOperation: jest.fn(() => '1223456783038485'),
     updateAccountValue: jest.fn((data: BuyDto) => {
       account.value = data.value

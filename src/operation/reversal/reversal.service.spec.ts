@@ -1,13 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ReversalService, TransactionDto } from './reversal.service';
 import { Transaction } from '../transaction.entity';
-import { UserAccount } from '../dependency.interface';
 import OperationType from '../operation-type';
-import { CancellationDto } from '../dto.interface';
+import { OperationDTO, ReversalDto, UserRegisteredDto } from '../dto.interface';
 
 describe('ReversalService', () => {
   let service: ReversalService;
-  const payload: CancellationDto = {
+  const payload: ReversalDto = {
     account: "1234",
     agency: "12345",
     externalId: 'xpto123',
@@ -24,9 +23,9 @@ describe('ReversalService', () => {
     created_at: null
   };
 
-  function updateDto(dto: UserAccount, operationType: OperationType, reason: string, status: string) {
+  function updateDto(dto: OperationDTO, operationType: OperationType, reason: string, status: string) {
     cancelledOperation.value = dto.value;
-    cancelledOperation.userId = dto.id;
+    cancelledOperation.userId = dto.userId;
     cancelledOperation.externalId = dto.externalId;
     cancelledOperation.type = operationType;
     cancelledOperation.information = reason;
@@ -34,15 +33,16 @@ describe('ReversalService', () => {
   }
 
   let getOperationByExternalId = (): Promise<TransactionDto | null> => null;
-  const registerApprovedOperation = (dto: UserAccount, operationType: OperationType, reason: string) => {
+  const registerApprovedOperation = (dto: OperationDTO, operationType: OperationType, reason: string) => {
     updateDto(dto, operationType, reason, 'approved');
   };
-  const registerCancelledOperation = (dto: UserAccount, operationType: OperationType, reason: string) => {
+  const registerCancelledOperation = (dto: OperationDTO, operationType: OperationType, reason: string) => {
     updateDto(dto, operationType, reason, 'cancelled');
   };
-  const account: UserAccount  = {
+  const account: UserRegisteredDto  = {
     id: 123,
-    ...payload,
+    account: "1234",
+    agency: "12345",
     value: 50
   }
   let mock = {
@@ -51,7 +51,7 @@ describe('ReversalService', () => {
         ...account
       }
     }),
-    updateAccountValue: jest.fn((dto: UserAccount) => {
+    updateAccountValue: jest.fn((dto: UserRegisteredDto) => {
       account.value = dto.value;
       return {
         ...account

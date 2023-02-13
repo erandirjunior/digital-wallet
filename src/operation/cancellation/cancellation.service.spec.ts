@@ -1,9 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CancellationService } from './cancellation.service';
-import { UserAccount } from '../dependency.interface';
 import { Transaction } from '../transaction.entity';
 import OperationType from '../operation-type';
-import { CancellationDto } from '../dto.interface';
+import { CancellationDto, OperationDTO, UserRegisteredDto } from '../dto.interface';
 import { TransactionDto } from '../reversal/reversal.service';
 
 describe('CancellationService', () => {
@@ -25,9 +24,9 @@ describe('CancellationService', () => {
     created_at: null
   };
 
-  function updateDto(dto: UserAccount, operationType: OperationType, reason: string, status: string) {
+  function updateDto(dto: OperationDTO, operationType: OperationType, reason: string, status: string) {
     cancellationDto.value = dto.value;
-    cancellationDto.userId = dto.id;
+    cancellationDto.userId = dto.userId;
     cancellationDto.externalId = dto.externalId;
     cancellationDto.type = operationType;
     cancellationDto.information = reason;
@@ -35,12 +34,13 @@ describe('CancellationService', () => {
   }
 
   let getOperationByExternalId = (): Promise<TransactionDto | null> => null;
-  const registerCancelledOperation = (dto: UserAccount, operationType: OperationType, reason: string) => {
+  const registerCancelledOperation = (dto: OperationDTO, operationType: OperationType, reason: string) => {
     updateDto(dto, operationType, reason, 'cancelled');
   };
-  const account: UserAccount  = {
+  const account: UserRegisteredDto = {
     id: 123,
-    ...payloadDto,
+    account: "1234",
+    agency: "12345",
     value: 50
   }
   let mock = {
@@ -56,7 +56,7 @@ describe('CancellationService', () => {
     }),
     getOperationByExternalId,
     registerCancelledOperation,
-    registerApprovedOperation: (dto: UserAccount, operationType: OperationType, reason: string) => {
+    registerApprovedOperation: (dto: OperationDTO, operationType: OperationType, reason: string) => {
       updateDto(dto, operationType, reason, 'approved');
     },
   };

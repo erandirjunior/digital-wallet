@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { BuyRepository, DepositDto, DepositRepository, UserAccount } from '../dependency.interface';
 import OperationType from '../operation-type';
 import { BuyDto } from '../dto.interface';
+import { BuyRepository } from '../dependency.interface';
 
 @Injectable()
 export class BuyService {
@@ -19,9 +19,13 @@ export class BuyService {
 
         const account = await this.repository.getAccountByBuyData(payload);
         account.value = payload.value;
-        account.externalId = payload.externalId;
+
         await this.repository.registerCancelledOperation(
-            account, OperationType.BUY, 'Duplicate buy'
+            {
+                userId: account.id,
+                value: payload.value,
+                externalId: payload.externalId
+            }, OperationType.BUY, 'Duplicate buy'
         );
 
         return true;
@@ -33,7 +37,11 @@ export class BuyService {
         if (account.value < payload.value) {
             account.value = payload.value;
             return await this.repository.registerCancelledOperation(
-                account, OperationType.BUY, 'Insufficient funds'
+                {
+                    userId: account.id,
+                    value: payload.value,
+                    externalId: payload.externalId
+                }, OperationType.BUY, 'Insufficient funds'
             );
         }
 
@@ -41,11 +49,11 @@ export class BuyService {
 
         await this.repository.updateAccountValue(account);
         const registerOperation = {
-            ...account,
+            userId: account.id,
             value: payload.value,
             externalId: payload.externalId
         }
 
-        await this.repository.registerDepositTransaction(registerOperation, OperationType.BUY);
+        await this.repository.registerApprovedOperation(registerOperation, OperationType.BUY, 'Buy in account!');
     }
 }
