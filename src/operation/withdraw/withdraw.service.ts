@@ -13,7 +13,7 @@ export class WithdrawService {
         const account = await this.repository.getAccount(payload);
 
         if (!account) {
-            throw new Error(`Account don't exists!`);
+            return;
         }
 
         account.value -= payload.value;

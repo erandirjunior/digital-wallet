@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import OperationType from '../operation-type';
-import { ReversalDto } from '../dto.interface';
+import { OperationDTO, ReversalDto, UserRegisteredDto } from '../dto.interface';
 import { ReversalRepository } from '../dependency.interface';
 
 
@@ -18,23 +18,36 @@ export class ReversalService {
 
 
     async reversal(payload: ReversalDto): Promise<void> {
+        return await this.saveIfReversalIsUnique(payload);
+    }
+
+    private async saveIfReversalIsUnique(payload: ReversalDto) {
         const account = await this.repository.getAccount(payload);
         const operation = await this.repository.getCancellationOperationByExternalId(payload.externalId);
         const reversalOperation = await this.repository.reversalOperationExists(payload.externalId);
 
         if (!operation || reversalOperation) {
-            const value = 0;
-            return await await this.repository.registerCancelledOperation(
-                {
-                    userId: account.id,
-                    value,
-                    externalId: payload.externalId
-                },
-                OperationType.REVERSAL,
-                'External reference not found or request already processed!'
-            );
+            return await this.saveCancelledOperation(account, payload);
         }
 
+        await this.saveOperation(account, operation);
+    }
+
+    private async saveCancelledOperation(account: UserRegisteredDto, payload: ReversalDto) {
+        const value = 0;
+        const data = {
+            userId: account.id,
+            value,
+            externalId: payload.externalId
+        };
+        return await await this.repository.registerCancelledOperation(
+            data,
+            OperationType.REVERSAL,
+            'External reference not found or request already processed!'
+        );
+    }
+
+    private async saveOperation(account: UserRegisteredDto, operation: OperationDTO) {
         account.value += operation.value;
         const data = {
             value: operation.value,

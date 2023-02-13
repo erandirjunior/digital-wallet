@@ -7,10 +7,6 @@ export class BuyHandler implements ICommandHandler<BuyCommand> {
     constructor(private service: BuyService) {}
 
     async execute(command: BuyCommand) {
-        const result = await this.service.isDuplicateExternalReference(command.operationDto);
-
-        if (!result) {
-            await this.service.buy(command.operationDto);
-        }
+        await this.service.buy(command.operationDto);
     }
 }
