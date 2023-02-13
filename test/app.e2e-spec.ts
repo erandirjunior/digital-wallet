@@ -15,10 +15,23 @@ describe('AppController (e2e)', () => {
     await app.init();
   });
 
-  it('/ (GET)', () => {
+  it('Register user', () => {
     return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('Hello World!');
+      .post('/users')
+      .send({
+        "name": "Erandir Junior",
+        "email": "erandir.junior@email.com"
+      })
+      .expect(201);
+  });
+
+  it('Error duplicate user', () => {
+    return request(app.getHttpServer())
+      .post('/users')
+      .send({
+        "name": "Erandir Junior",
+        "email": "erandir.junior@email.com"
+      })
+      .expect(400);
   });
 });
