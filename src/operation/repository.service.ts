@@ -98,16 +98,6 @@ export class RepositoryService implements OperationRepository, BuyRepository, Ca
         await this.transactionRepository.insert(transaction);
     }
 
-    async cancelOperation(externalId: string): Promise<void> {
-        const result = await this.transactionRepository.findOneBy({
-            externalId,
-            status: 'approved'
-        });
-
-        result.status = 'cancelled';
-        await this.transactionRepository.save(result);
-    }
-
     async getOperationByExternalId(externalId: string): Promise<OperationDTO | null> {
         const result = await this.transactionRepository.findOneBy({
             externalId,

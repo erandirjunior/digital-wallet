@@ -33,7 +33,6 @@ export class CancellationService {
             externalId: payload.externalId
         };
 
-        await this.repository.cancelOperation(payload.externalId);
         await this.repository.registerApprovedOperation(
             data, OperationType.CANCELLED, 'Cancelled request!'
         );
