@@ -15,7 +15,7 @@ export interface Balance {
 
     account: string;
 
-    cardNumber: number
+    cardNumber: string
 
     name: string;
 
@@ -48,7 +48,7 @@ export interface StatementReport {
 }
 
 export interface ReportRepository {
-    getBalance(payload: BalancePayload): Promise<Balance | null>
+    getBalance(account: string, agency: string): Promise<Balance | null>
 
     getStatement(payload: Balance): Promise<Operation[] | null>
 }
@@ -59,12 +59,17 @@ export class UserReportService {
         @Inject('ReportRepository') private readonly repository: ReportRepository
     ) {}
 
-    async getBalanceReport(payload: BalancePayload): Promise<Balance | null> {
-        return await this.repository.getBalance(payload);
+    async getBalanceReport(account: string, agency: string): Promise<Balance | null> {
+        return await this.repository.getBalance(account, agency);
     }
 
-    async getStatementReport(payload: BalancePayload): Promise<StatementReport | null> {
-        const user = await this.repository.getBalance(payload);
+    async getStatementReport(account: string, agency: string): Promise<StatementReport | null> {
+        const user = await this.repository.getBalance(account, agency);
+
+        if (!user) {
+            return null;
+        }
+
         const operations = await this.repository.getStatement(user);
         return {
             user,

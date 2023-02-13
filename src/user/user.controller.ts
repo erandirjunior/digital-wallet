@@ -26,14 +26,16 @@ export class UserController {
                 message: e,
             });
         }
-
     }
 
     @ApiProperty()
     @Get('/agency/:agency/account/:account/report/balance')
-    async balance(@Param() data: PayloadReportValidation, @Res() res) {
+    async balance(@Param() data, @Res() res) {
         try {
-            const result = await this.userReportService.getBalanceReport(data);
+            const result = await this.userReportService.getBalanceReport(
+                data.account,
+                data.agency,
+            );
             return res.status(HttpStatus.OK).json({
                 success: true,
                 message: result,
@@ -47,9 +49,12 @@ export class UserController {
     }
 
     @Get('/agency/:agency/account/:account/report/statement')
-    async statement(@Param() data: PayloadReportValidation, @Res() res) {
+    async statement(@Param() data, @Res() res) {
         try {
-            const result = await this.userReportService.getStatementReport(data);
+            const result = await this.userReportService.getStatementReport(
+                data.account,
+                data.agency,
+            );
             return res.status(HttpStatus.OK).json({
                 success: true,
                 message: result,

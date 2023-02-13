@@ -29,7 +29,7 @@ export class UserRepositoryService implements UserRepository, ReportRepository {
 
     }
 
-    async findByCardNumber(cardNumber: number): Promise<boolean> {
+    async findByCardNumber(cardNumber: string): Promise<boolean> {
         const result = await this.repository.count({
             where: {
                 card: cardNumber
@@ -60,10 +60,10 @@ export class UserRepositoryService implements UserRepository, ReportRepository {
         return !!result;
     }
 
-    async getBalance(payload: BalancePayload): Promise<Balance | null> {
+    async getBalance(account: string, agency: string): Promise<Balance | null> {
         const result = await this.repository.findOneBy({
-            account: payload.account,
-            agency: payload.agency
+            account,
+            agency
         });
 
         if (!result) {

@@ -18,7 +18,7 @@ export class User {
     agency: string;
 
     @Column()
-    card: number;
+    card: string;
 
     @Column()
     value: number;

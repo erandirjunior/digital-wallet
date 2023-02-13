@@ -3,14 +3,14 @@ import { Balance, BalancePayload, Operation, UserReportService } from './user-re
 
 describe('UserReportService', () => {
   let service: UserReportService;
-  const user = {
+  const user: Balance = {
     id: 1,
-    agency: "1234",
-    account: "12355",
-    cardNumber: 1234123412341234,
+    value: 100,
     name: 'Antonio Erandir',
     email: 'erandir@email.com',
-    value: 100
+    agency: "1234",
+    account: "12355",
+    cardNumber: "1234123412341234"
   };
 
   beforeAll(async () => {
@@ -62,13 +62,35 @@ describe('UserReportService', () => {
   };
 
   it('Should return balance report', async () => {
-    const result = await service.getBalanceReport(payload);
+    const result = await service.getBalanceReport(user.account, user.agency);
     expect(result).toBe(user);
   });
 
   it('Should return balance report', async () => {
-    const result = await service.getStatementReport(payload);
+    const result = await service.getStatementReport(user.account, user.agency);
     expect(result.user).toBe(user);
     expect(result.operations).toHaveLength(2);
   });
+
+  it('Should return balance report', async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        UserReportService,
+        {
+          provide: 'ReportRepository',
+          useValue: {
+            getCardNumber: jest.fn(() => null),
+            getBalance: jest.fn(() => null),
+            getStatement: jest.fn(() => null)
+          }
+        }
+      ],
+    }).compile();
+
+    service = module.get<UserReportService>(UserReportService);
+    const result = await service.getStatementReport(user.account, user.agency);
+    expect(result).toBe(null);
+  });
+
+
 });
