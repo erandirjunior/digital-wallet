@@ -68,6 +68,7 @@ describe('CancellationService', () => {
     registerApprovedOperation: (dto: OperationDTO, operationType: OperationType, reason: string) => {
       updateDto(dto, operationType, reason, 'approved');
     },
+    cancellationRequestedExists: jest.fn(() => false)
   };
 
   it('Should register cancellation operation', async () => {
