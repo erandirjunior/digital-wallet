@@ -1,9 +1,8 @@
 import { Body, Controller, Get, HttpStatus, Inject, Param, Post, Res } from '@nestjs/common';
-import { GenerateAccount, GenerateCard, UserRepository, UserRegisterService } from './register/user-register.service';
+import { UserRegisterService } from './register/user-register.service';
 import { PayloadValidation } from './payload.validation';
-import { BalancePayload, StatementReport, UserReportService } from './report/user-report.service';
+import { UserReportService } from './report/user-report.service';
 import { ApiExtraModels, ApiOkResponse, ApiOperation, ApiProperty, ApiQuery, getSchemaPath } from '@nestjs/swagger';
-import { PayloadReportValidation } from './payload-report.validation';
 import { BalanceDto } from './report/balance.dto';
 import { ReportValidation } from './report.validation';
 

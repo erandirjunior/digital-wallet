@@ -7,7 +7,7 @@ export class BasicOperationValidation implements SimpleOperationDto {
     @Length(5, 5)
     readonly account: string;
 
-    @ApiProperty({example: '07329'})
+    @ApiProperty({example: '7329'})
     @Length(4, 4)
     readonly agency: string;
 

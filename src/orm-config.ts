@@ -2,7 +2,7 @@ import { User } from './user/user.entity';
 import { Transaction } from './operation/transaction.entity';
 import { user1676472190481 } from '../migrations/1676472190481-user';
 import { transaction1676472206949 } from '../migrations/1676472206949-transaction';
-import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
 export const config: TypeOrmModuleOptions = {

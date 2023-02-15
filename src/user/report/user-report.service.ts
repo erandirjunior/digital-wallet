@@ -1,6 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { UserRepository } from '../register/user-register.service';
-import { Column } from 'typeorm';
 
 export interface BalancePayload {
     agency: string;

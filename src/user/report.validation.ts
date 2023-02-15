@@ -1,5 +1,4 @@
-import { IsEmail, IsNotEmpty, IsNumber, IsString, Length, Min } from 'class-validator';
-import { Payload } from './register/user-register.service';
+import { Length } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class ReportValidation {

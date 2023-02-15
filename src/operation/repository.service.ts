@@ -4,12 +4,12 @@ import { User } from '../user/user.entity';
 import { Transaction } from './transaction.entity';
 import OperationType from './operation-type';
 import {
-    BuyRepository, CancellationRepository, /*BuyRepository, CancellationRepository,*/
-    OperationRepository, ReversalRepository/*, ReversalRepository*/
+    BuyRepository, CancellationRepository,
+    OperationRepository, ReversalRepository
 } from './dependency.interface';
 import {
     BuyDto,
-    OperationDTO, /*BuyDto, OperationDto, OperationRegisteredDto, UserDto,*/
+    OperationDTO,
     UserInformation,
     UserRegisteredDto
 } from './dto.interface';

@@ -1,12 +1,7 @@
 import { Body, Controller, Get, HttpStatus, Inject, Param, Post, Res } from '@nestjs/common';
-import { DepositService } from './deposit/deposit.service';
 import { BasicOperationValidation } from './basic-operation.validation';
-import { WithdrawService } from './withdraw/withdraw.service';
 import { BuyOperationValidation } from './buy/buy-operation.validation';
-import { BuyService } from './buy/buy.service';
-import { CancellationService } from './cancellation/cancellation.service';
 import { CancellationOperationValidation } from './cancellation/cancellation-operation.validation';
-import { ReversalService } from './reversal/reversal.service';
 import { ReversalOperationValidation } from './reversal/reversal-operation.validation';
 import { CommandBus } from '@nestjs/cqrs';
 import { DepositCommand } from './commands/deposit.command';
