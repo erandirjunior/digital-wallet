@@ -5,7 +5,7 @@ enum OperationType {
 
     BUY = 'buy',
 
-    CANCELLED = 'cancelled',
+    CANCELLATION = 'cancellation',
 
     REVERSAL = 'reversal'
 }

@@ -3,6 +3,7 @@ import { ReversalService, TransactionDto } from './reversal.service';
 import { Transaction } from '../transaction.entity';
 import OperationType from '../operation-type';
 import { OperationDTO, ReversalDto, UserRegisteredDto } from '../dto.interface';
+import OperationMessage from '../OperationMessage';
 
 describe('ReversalService', () => {
   let service: ReversalService;
@@ -81,7 +82,7 @@ describe('ReversalService', () => {
     const result = await service.reversal(payload);
     expect(cancelledOperation.value).toBe(0);
     expect(cancelledOperation.type).toBe(OperationType.REVERSAL);
-    expect(cancelledOperation.information).toBe('External reference not found or request already processed!');
+    expect(cancelledOperation.information).toBe(OperationMessage.REVERSAL_CANCELLED);
   });
 
   it('Register a reversal', async () => {
@@ -117,6 +118,6 @@ describe('ReversalService', () => {
     const result = await service.reversal(payload);
     expect(account.value).toBe(100);
     expect(cancelledOperation.type).toBe(OperationType.REVERSAL);
-    expect(cancelledOperation.information).toBe('Reversal requested');
+    expect(cancelledOperation.information).toBe(OperationMessage.OPERATION_SUCCESSFULLY);
   });
 });

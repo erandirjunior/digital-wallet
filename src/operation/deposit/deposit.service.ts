@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import OperationType from '../operation-type';
 import { OperationRepository } from '../dependency.interface';
 import { SimpleOperationDto, UserRegisteredDto } from '../dto.interface';
+import OperationMessage from '../OperationMessage';
 
 @Injectable()
 export class DepositService {
@@ -31,6 +32,7 @@ export class DepositService {
             externalId: null
         }
 
-        await this.repository.registerApprovedOperation(registerOperation, OperationType.DEPOSIT, 'Deposit in account!');
+        await this.repository.registerApprovedOperation(
+            registerOperation, OperationType.DEPOSIT, OperationMessage.OPERATION_SUCCESSFULLY);
     }
 }

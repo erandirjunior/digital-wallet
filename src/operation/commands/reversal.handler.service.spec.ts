@@ -6,6 +6,7 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { ReversalService, TransactionDto } from '../reversal/reversal.service';
 import { ReversalHandler } from './reversal.handler';
 import { ReversalCommand } from './reversal.command';
+import OperationMessage from '../OperationMessage';
 
 describe('ReversalService', () => {
   let service: ReversalHandler;
@@ -101,6 +102,6 @@ describe('ReversalService', () => {
     const result = await service.execute(new ReversalCommand(payload));
     expect(account.value).toBe(100);
     expect(cancelledOperation.type).toBe(OperationType.REVERSAL);
-    expect(cancelledOperation.information).toBe('Reversal requested');
+    expect(cancelledOperation.information).toBe(OperationMessage.OPERATION_SUCCESSFULLY);
   });
 });

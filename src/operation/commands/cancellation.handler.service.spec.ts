@@ -7,6 +7,7 @@ import { CancellationService } from '../cancellation/cancellation.service';
 import { CancellationHandler } from './cancellation.handler';
 import { CancellationCommand } from './cancellation.command';
 import { CqrsModule } from '@nestjs/cqrs';
+import OperationMessage from '../OperationMessage';
 
 describe('CancellationService', () => {
   let service: CancellationHandler;
@@ -91,7 +92,7 @@ describe('CancellationService', () => {
     service = module.get<CancellationHandler>(CancellationHandler);
     const result = await service.execute(new CancellationCommand(payloadDto));
     expect(cancellationDto.value).toBe(50);
-    expect(cancellationDto.type).toBe(OperationType.CANCELLED);
-    expect(cancellationDto.information).toBe('Cancelled request!');
+    expect(cancellationDto.type).toBe(OperationType.CANCELLATION);
+    expect(cancellationDto.information).toBe(OperationMessage.OPERATION_SUCCESSFULLY);
   });
 });

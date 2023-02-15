@@ -120,7 +120,7 @@ export class RepositoryService implements OperationRepository, BuyRepository, Ca
         const result = await this.transactionRepository.findOneBy({
             externalId,
             status: 'approved',
-            type: OperationType.CANCELLED
+            type: OperationType.CANCELLATION
         });
 
         if (!result) {
@@ -151,7 +151,7 @@ export class RepositoryService implements OperationRepository, BuyRepository, Ca
             where: {
                 externalId,
                 status: 'approved',
-                type: OperationType.CANCELLED
+                type: OperationType.CANCELLATION
             }
         });
 

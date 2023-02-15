@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import OperationType from '../operation-type';
 import { CancellationDto, OperationDTO, UserRegisteredDto } from '../dto.interface';
 import { CancellationRepository } from '../dependency.interface';
+import OperationMessage from '../OperationMessage';
 
 @Injectable()
 export class CancellationService {
@@ -27,18 +28,17 @@ export class CancellationService {
 
     private async saveCancelledOperation(account: UserRegisteredDto, payload: CancellationDto) {
         const value = 0;
-        return await await this.repository.registerCancelledOperation({
-                userId: account.id,
-                value,
-                externalId: payload.externalId
-            },
-            OperationType.CANCELLED,
-            'External reference not found or already cancelled!'
+        const data = {
+            userId: account.id,
+            value,
+            externalId: payload.externalId
+        };
+        return await await this.repository.registerCancelledOperation(
+            data, OperationType.CANCELLATION, OperationMessage.CANCELLATION_CANCELLED
         );
     }
 
     private async saveOperation(account: UserRegisteredDto, operation: OperationDTO, payload: CancellationDto) {
-        account.value = operation.value;
         const data = {
             userId: account.id,
             value: operation.value,
@@ -46,7 +46,7 @@ export class CancellationService {
         };
 
         await this.repository.registerApprovedOperation(
-            data, OperationType.CANCELLED, 'Cancelled request!'
+            data, OperationType.CANCELLATION, OperationMessage.OPERATION_SUCCESSFULLY
         );
     }
 }

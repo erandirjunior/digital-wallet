@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import OperationType from '../operation-type';
 import { BuyDto, UserRegisteredDto } from '../dto.interface';
 import { BuyRepository } from '../dependency.interface';
+import OperationMessage from '../OperationMessage';
 
 @Injectable()
 export class BuyService {
@@ -31,7 +32,7 @@ export class BuyService {
                 userId: account.id,
                 value: payload.value,
                 externalId: payload.externalId
-            }, OperationType.BUY, 'Duplicate buy'
+            }, OperationType.BUY, OperationMessage.DUPLICATED_BUY
         );
     }
 
@@ -45,12 +46,13 @@ export class BuyService {
 
     private async saveInsufficientBalance(account: UserRegisteredDto, payload: BuyDto) {
         account.value = payload.value;
+        const data = {
+            userId: account.id,
+            value: payload.value,
+            externalId: payload.externalId
+        };
         return await this.repository.registerCancelledOperation(
-            {
-                userId: account.id,
-                value: payload.value,
-                externalId: payload.externalId
-            }, OperationType.BUY, 'Insufficient balance!'
+            data, OperationType.BUY, OperationMessage.INSUFFICIENT_BALANCE
         );
     }
 
@@ -64,6 +66,10 @@ export class BuyService {
             externalId: payload.externalId
         }
 
-        await this.repository.registerApprovedOperation(registerOperation, OperationType.BUY, 'Buy in account!');
+        await this.repository.registerApprovedOperation(
+            registerOperation,
+            OperationType.BUY,
+            OperationMessage.OPERATION_SUCCESSFULLY
+        );
     }
 }

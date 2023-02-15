@@ -4,6 +4,7 @@ import { Transaction } from '../transaction.entity';
 import OperationType from '../operation-type';
 import { CancellationDto, OperationDTO, UserRegisteredDto } from '../dto.interface';
 import { TransactionDto } from '../reversal/reversal.service';
+import OperationMessage from '../OperationMessage';
 
 describe('CancellationService', () => {
   let service: CancellationService;
@@ -78,8 +79,8 @@ describe('CancellationService', () => {
     service = module.get<CancellationService>(CancellationService);
     const result = await service.cancel(payloadDto);
     expect(cancellationDto.value).toBe(0);
-    expect(cancellationDto.type).toBe(OperationType.CANCELLED);
-    expect(cancellationDto.information).toBe('External reference not found or already cancelled!');
+    expect(cancellationDto.type).toBe(OperationType.CANCELLATION);
+    expect(cancellationDto.information).toBe(OperationMessage.CANCELLATION_CANCELLED);
   });
 
   it('Should be cancelled operation because external id is duplicated', async () => {
@@ -99,8 +100,8 @@ describe('CancellationService', () => {
     service = module.get<CancellationService>(CancellationService);
     const result = await service.cancel(payloadDto);
     expect(cancellationDto.value).toBe(0);
-    expect(cancellationDto.type).toBe(OperationType.CANCELLED);
-    expect(cancellationDto.information).toBe('External reference not found or already cancelled!');
+    expect(cancellationDto.type).toBe(OperationType.CANCELLATION);
+    expect(cancellationDto.information).toBe(OperationMessage.CANCELLATION_CANCELLED);
   });
 
   it('Should register cancellation operation', async () => {
@@ -127,7 +128,7 @@ describe('CancellationService', () => {
     service = module.get<CancellationService>(CancellationService);
     const result = await service.cancel(payloadDto);
     expect(cancellationDto.value).toBe(50);
-    expect(cancellationDto.type).toBe(OperationType.CANCELLED);
-    expect(cancellationDto.information).toBe('Cancelled request!');
+    expect(cancellationDto.type).toBe(OperationType.CANCELLATION);
+    expect(cancellationDto.information).toBe(OperationMessage.OPERATION_SUCCESSFULLY);
   });
 });

@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import OperationType from '../operation-type';
 import { OperationDTO, ReversalDto, UserRegisteredDto } from '../dto.interface';
 import { ReversalRepository } from '../dependency.interface';
+import OperationMessage from '../OperationMessage';
 
 
 export interface TransactionDto {
@@ -42,7 +43,7 @@ export class ReversalService {
         return await await this.repository.registerCancelledOperation(
             data,
             OperationType.REVERSAL,
-            'External reference not found or request already processed!'
+            OperationMessage.REVERSAL_CANCELLED
         );
     }
 
@@ -56,7 +57,7 @@ export class ReversalService {
 
         await this.repository.updateAccountValue(account);
         await this.repository.registerApprovedOperation(
-            data, OperationType.REVERSAL, 'Reversal requested'
+            data, OperationType.REVERSAL, OperationMessage.OPERATION_SUCCESSFULLY
         );
     }
 }
