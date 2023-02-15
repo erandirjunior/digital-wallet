@@ -15,8 +15,8 @@ export interface Payload {
 }
 
 export interface UserAccount extends Payload{
-    accountNumber: string;
-    accountAgency: string;
+    account: string;
+    agency: string;
     cardNumber: string;
 }
 
@@ -58,8 +58,8 @@ export class UserRegisterService {
 
         return {
             ...payload,
-            accountNumber: account.accountNumber,
-            accountAgency: account.accountAgency,
+            account: account.accountNumber,
+            agency: account.accountAgency,
             cardNumber
         }
     }

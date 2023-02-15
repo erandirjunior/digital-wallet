@@ -3,15 +3,15 @@ import { ApiProperty } from '@nestjs/swagger';
 import { SimpleOperationDto } from './dto.interface';
 
 export class BasicOperationValidation implements SimpleOperationDto {
-    @ApiProperty()
+    @ApiProperty({example: '05691'})
     @Length(5, 5)
     readonly account: string;
 
-    @ApiProperty()
+    @ApiProperty({example: '07329'})
     @Length(4, 4)
     readonly agency: string;
 
-    @ApiProperty()
+    @ApiProperty({example: '100'})
     @Min(0)
     @IsNumber()
     value: number;

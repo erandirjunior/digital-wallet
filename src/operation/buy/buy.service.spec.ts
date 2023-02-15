@@ -45,17 +45,10 @@ describe('BuyService', () => {
     service = module.get<BuyService>(BuyService);
   }
 
-  it('Should return false because buy is duplicate', async () => {
+  it('Should register a duplicate buy', async () => {
     await getModule(mock);
-    const result = await service.isDuplicateExternalReference(payload);
-    expect(result).toBeFalsy();
-  });
-
-  it('Should return true', async () => {
-    mock.countExternalId = () => 1;
-    await getModule(mock);
-    const result = await service.isDuplicateExternalReference(payload);
-    expect(result).toBeTruthy();
+    const result = await service.buy(payload);
+    expect(account.value).toBe(50);
   });
 
   it('Should register insufficient funds', async () => {

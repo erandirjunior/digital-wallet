@@ -3,15 +3,15 @@ import { ApiProperty } from '@nestjs/swagger';
 import { ReversalDto } from '../dto.interface';
 
 export class ReversalOperationValidation implements ReversalDto {
-    @ApiProperty()
+    @ApiProperty({example: '83901'})
     @Length(5, 5)
     readonly account: string;
 
-    @ApiProperty()
+    @ApiProperty({example: '8302'})
     @Length(4, 4)
     readonly agency: string;
 
-    @ApiProperty()
+    @ApiProperty({example: 'xpto01'})
     @IsString()
     @Length(5)
     readonly externalId: string;

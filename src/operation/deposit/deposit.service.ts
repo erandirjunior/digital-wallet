@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import OperationType from '../operation-type';
 import { OperationRepository } from '../dependency.interface';
-import { SimpleOperationDto } from '../dto.interface';
+import { SimpleOperationDto, UserRegisteredDto } from '../dto.interface';
 
 @Injectable()
 export class DepositService {
@@ -12,13 +12,19 @@ export class DepositService {
     async deposit(payload: SimpleOperationDto): Promise<void> {
         const account = await this.repository.getAccount(payload);
 
-        if (!account) {
-            return;
+        await this.saveOperationIfUserExists(account, payload);
+    }
+
+    private async saveOperationIfUserExists(account: UserRegisteredDto, payload: SimpleOperationDto) {
+        if (account) {
+            account.value += payload.value;
+            await this.repository.updateAccountValue(account);
+            await this.registerOperation(account, payload);
+
         }
+    }
 
-        account.value += payload.value;
-        await this.repository.updateAccountValue(account);
-
+    private async registerOperation(account: UserRegisteredDto, payload: SimpleOperationDto) {
         const registerOperation = {
             userId: account.id,
             value: payload.value,

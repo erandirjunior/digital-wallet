@@ -83,8 +83,8 @@ describe('UserService', () => {
     const result = await service.createAccount(payload);
     expect(result.name).toEqual(payload.name);
     expect(result.email).toEqual(payload.email);
-    expect(result.accountNumber).toEqual(78352);
-    expect(result.accountAgency).toEqual(2540);
+    expect(result.account).toEqual(78352);
+    expect(result.agency).toEqual(2540);
     expect(result.cardNumber).toEqual(1223456783038485);
   });
 

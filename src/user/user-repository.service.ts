@@ -43,8 +43,8 @@ export class UserRepositoryService implements UserRepository, ReportRepository {
         const user = {
             name: userAccount.name,
             email: userAccount.email,
-            agency: userAccount.accountAgency,
-            account: userAccount.accountNumber,
+            agency: userAccount.agency,
+            account: userAccount.account,
             card: userAccount.cardNumber,
         }
         await this.repository.save(user)

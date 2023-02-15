@@ -16,7 +16,6 @@ export class ReversalService {
         @Inject('CancellationRepository') private readonly repository: ReversalRepository
     ) {}
 
-
     async reversal(payload: ReversalDto): Promise<void> {
         return await this.saveIfReversalIsUnique(payload);
     }

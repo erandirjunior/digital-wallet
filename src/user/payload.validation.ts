@@ -6,7 +6,6 @@ export class PayloadValidation implements Payload {
     @IsString()
     @IsNotEmpty()
     @IsEmail()
-    @ApiProperty()
     email: string;
 
     @IsString()

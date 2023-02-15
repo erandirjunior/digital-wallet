@@ -9,7 +9,6 @@ export class CancellationService {
         @Inject('CancellationRepository') private readonly repository: CancellationRepository
     ) {}
 
-
     async cancel(payload: CancellationDto): Promise<void> {
         const account = await this.repository.getAccount(payload);
         return await this.saveCancellationIfReferenceIsNew(payload, account);
@@ -36,8 +35,6 @@ export class CancellationService {
             'External reference not found or already cancelled!'
         );
     }
-
-
 
     private async saveOperation(account: UserRegisteredDto, operation: OperationDTO, payload: CancellationDto) {
         account.value = operation.value;

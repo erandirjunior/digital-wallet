@@ -14,12 +14,14 @@ import { WithdrawCommand } from './commands/withdraw.command';
 import { BuyCommand } from './commands/buy.command';
 import { CancellationCommand } from './commands/cancellation.command';
 import { ReversalCommand } from './commands/reversal.command';
+import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 @Controller()
 export class OperationController {
     constructor(private commandBus: CommandBus) {}
 
     @Post('deposits')
+    @ApiOperation({summary: 'Request a deposit to account sent'})
     async create(@Body() body: BasicOperationValidation, @Res() res) {
         this.commandBus.execute(
             new DepositCommand(body)
@@ -28,6 +30,7 @@ export class OperationController {
     }
 
     @Post('withdraws')
+    @ApiOperation({summary: 'Request a withdraw to account sent'})
     async withdraw(@Body() body: BasicOperationValidation, @Res() res) {
         this.commandBus.execute(
             new WithdrawCommand(body)
@@ -36,6 +39,7 @@ export class OperationController {
     }
 
     @Post('buys')
+    @ApiOperation({summary: 'Request a buy to account sent'})
     async buy(@Body() body: BuyOperationValidation, @Res() res) {
         this.commandBus.execute(
             new BuyCommand(body)
@@ -44,6 +48,7 @@ export class OperationController {
     }
 
     @Post('cancellations')
+    @ApiOperation({summary: 'Request a cancellation to account sent'})
     async cancellation(@Body() body: CancellationOperationValidation, @Res() res) {
         this.commandBus.execute(
             new CancellationCommand(body)
@@ -52,6 +57,7 @@ export class OperationController {
     }
 
     @Post('reversals')
+    @ApiOperation({summary: 'Request a reversal to account sent'})
     async reversal(@Body() body: ReversalOperationValidation, @Res() res) {
         this.commandBus.execute(
             new ReversalCommand(body)

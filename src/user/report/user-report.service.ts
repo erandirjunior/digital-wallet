@@ -43,7 +43,7 @@ export interface Operation {
 }
 
 export interface StatementReport {
-    user: BalancePayload;
+    user: Balance;
     operations: Operation[] | null;
 }
 

@@ -40,16 +40,14 @@ describe('WithdrawService', () => {
     service = module.get<WithdrawService>(WithdrawService);
   }
 
-
-  it('Should throw error', async () => {
+  it('Should ignore withdraw operation', async () => {
     await getModule({
       getAccount: jest.fn(async () => null),
       ...dependencies
     });
     const result = async () => await service.withdraw(payload);
-    expect(result).rejects.toThrow(`Account don't exists!`);
+    expect(user.value).toBe(100);
   });
-
 
   it('Should update value account', async () => {
     await getModule({

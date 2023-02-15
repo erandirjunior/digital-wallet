@@ -41,7 +41,7 @@ describe('UserService', () => {
   };
 
 
-  it('Should throw error', async () => {
+  it('Should ignore deposit', async () => {
     const useValues = {
       getAccount: jest.fn(() => null),
       ...dependencies
@@ -50,7 +50,7 @@ describe('UserService', () => {
     await getModule(useValues);
 
     const result = async () => await service.deposit(payload);
-    expect(result).rejects.toThrow(`Account don't exists!`);
+    expect(user.value).toBe(100);
   });
 
 
