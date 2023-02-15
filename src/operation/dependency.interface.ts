@@ -27,6 +27,8 @@ export interface BuyRepository extends RegisterApprovedOperation, RegisterCancel
 }
 export interface CancellationRepository extends AccountRepository, RegisterApprovedOperation, RegisterCancelledOperation {
     getOperationByExternalId(externalId: string): Promise<OperationDTO | null>;
+
+    cancellationRequestedExists(externalId: string): Promise<boolean>;
 }
 
 export interface ReversalRepository extends AccountRepository, RegisterApprovedOperation, RegisterCancelledOperation {
