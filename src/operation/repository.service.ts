@@ -145,4 +145,16 @@ export class RepositoryService implements OperationRepository, BuyRepository, Ca
 
         return !!result;
     }
+
+    async cancellationRequestedExists(externalId: string): Promise<boolean> {
+        const result = await this.transactionRepository.count({
+            where: {
+                externalId,
+                status: 'approved',
+                type: OperationType.CANCELLED
+            }
+        });
+
+        return !!result;
+    }
 }

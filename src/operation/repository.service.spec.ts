@@ -187,4 +187,9 @@ describe('UserController', () => {
     await getModule(mock);
     expect(await repository.reversalOperationExists("XPTO01")).toBeTruthy();
   });
+
+  it('Should return one data from external id', async () => {
+    await getModule(mock);
+    expect(await repository.cancellationRequestedExists("XPTO01")).toBeTruthy();
+  });
 });
