@@ -22,8 +22,9 @@ Para conhecer todas as bibliotecas utilizadas, acesse o arquivo package.json.
 Arquitetura do projeto:
 <img src="img/arquitetura.png">
 De forma não muito complexa o projeto foi realizado da seguinte forma: as requisições de manipulação da conta chegam no controller,
-que dispara um comando especifíco dependendo da ação. Para cada comando, existe um manipulador observando, assim, quando um comando
+que dispara um comando especifíco para cada ação solicitada. Para cada comando, existe um manipulador observando, assim, quando um comando
 é disparado, o manipulador responsável por aquele comando é executado, chamando um serviço específico que executará toda a lógica do sistema.
+A execução é realizada de forma assíncrona. 
 
 ## Para executar a aplicação, siga todos os passos descritos abaixo:
 
@@ -55,3 +56,9 @@ docker exec -it digital_wallet npm run test:cov
 docker exec -it digital_wallet npm run start
 ```
 **No navegador, acesse localhost:3000/api para acessar a documentação da api.**
+
+## Executando ações
+
+Por meio da documentação encontrada no endereço **localhost:3000/api**, é possível fazer todas
+as requisições possíveis. É importante saber que a primeira coisa a ser feita é criar um usuário,
+e então fazer o restante das requisições enviando os dados necessários.
