@@ -9,8 +9,6 @@ import { user1676472190481 } from '../migrations/1676472190481-user';
 import { transaction1676472206949 } from '../migrations/1676472206949-transaction';
 import { config } from './orm-config';
 
-console.log(config);
-
 @Module({
   imports: [
     TypeOrmModule.forRoot(config/*{
