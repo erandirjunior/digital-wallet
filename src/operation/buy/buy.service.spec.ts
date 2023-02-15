@@ -46,19 +46,21 @@ describe('BuyService', () => {
   }
 
   it('Should register a duplicate buy', async () => {
+    mock.countExternalId = () => 1
     await getModule(mock);
     const result = await service.buy(payload);
     expect(account.value).toBe(50);
   });
 
   it('Should register insufficient funds', async () => {
+    mock.countExternalId = () => 0
     await getModule(mock);
     const result = await service.buy(payload);
     expect(account.value).toBe(50);
   });
 
   it('Should register a buy', async () => {
-    payload.value = 50;
+    account.value = 100;
     await getModule(mock);
     const result = await service.buy(payload);
     expect(account.value).toBe(0);

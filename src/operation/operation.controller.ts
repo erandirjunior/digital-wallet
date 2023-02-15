@@ -22,7 +22,7 @@ export class OperationController {
 
     @Post('deposits')
     @ApiOperation({summary: 'Request a deposit to account sent'})
-    async create(@Body() body: BasicOperationValidation, @Res() res) {
+    async deposit(@Body() body: BasicOperationValidation, @Res() res) {
         this.commandBus.execute(
             new DepositCommand(body)
         );
