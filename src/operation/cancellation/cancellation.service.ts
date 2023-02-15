@@ -16,8 +16,9 @@ export class CancellationService {
 
     private async saveCancellationIfReferenceIsNew(payload: CancellationDto, account: UserRegisteredDto) {
         const operation = await this.repository.getOperationByExternalId(payload.externalId);
+        const isDuplicated = await this.repository.cancellationRequestedExists(payload.externalId);
 
-        if (!operation) {
+        if (!operation || isDuplicated) {
             return await this.saveCancelledOperation(account, payload);
         }
 

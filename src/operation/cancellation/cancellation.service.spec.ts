@@ -59,6 +59,7 @@ describe('CancellationService', () => {
     registerApprovedOperation: (dto: OperationDTO, operationType: OperationType, reason: string) => {
       updateDto(dto, operationType, reason, 'approved');
     },
+    cancellationRequestedExists: jest.fn(() => false)
   };
 
   it('Should be cancelled operation because external id not found', async () => {
@@ -69,6 +70,27 @@ describe('CancellationService', () => {
           provide: 'CancellationRepository',
           useValue: {
             ...mock
+          }
+        }
+      ],
+    }).compile();
+
+    service = module.get<CancellationService>(CancellationService);
+    const result = await service.cancel(payloadDto);
+    expect(cancellationDto.value).toBe(0);
+    expect(cancellationDto.type).toBe(OperationType.CANCELLED);
+    expect(cancellationDto.information).toBe('External reference not found or already cancelled!');
+  });
+
+  it('Should be cancelled operation because external id is duplicated', async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        CancellationService,
+        {
+          provide: 'CancellationRepository',
+          useValue: {
+            ...mock,
+            cancellationRequestedExists: jest.fn(() => true)
           }
         }
       ],
