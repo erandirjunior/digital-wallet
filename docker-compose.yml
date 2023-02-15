@@ -15,20 +15,7 @@ services:
     env_file:
       - .env
     depends_on:
-      - sqs
       - mysql
-    networks:
-      - digital-wallet-network
-    links:
-      - sqs:sqs
-  sqs:
-    image: softwaremill/elasticmq
-    container_name: local-sqs
-    ports:
-      - 9324:9324
-      - 9325:9325
-    volumes:
-      - ./elasticmq.conf:/opt/config/elasticmq.conf
     networks:
       - digital-wallet-network
   adminer:
