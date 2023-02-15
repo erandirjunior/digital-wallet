@@ -5,6 +5,7 @@ import { BalancePayload, StatementReport, UserReportService } from './report/use
 import { ApiExtraModels, ApiOkResponse, ApiOperation, ApiProperty, ApiQuery, getSchemaPath } from '@nestjs/swagger';
 import { PayloadReportValidation } from './payload-report.validation';
 import { BalanceDto } from './report/balance.dto';
+import { ReportValidation } from './report.validation';
 
 @Controller('users')
 export class UserController {
@@ -40,7 +41,7 @@ export class UserController {
             $ref: getSchemaPath(BalanceDto)
         }
     })
-    async balance(@Param() data, @Res() res) {
+    async balance(@Param() data: ReportValidation, @Res() res) {
         const result = await this.userReportService.getBalanceReport(
             data.account,
             data.agency,
@@ -53,7 +54,7 @@ export class UserController {
 
     @Get('/agency/:agency/account/:account/report/statement')
     @ApiOperation({summary: 'Request the statement report'})
-    async statement(@Param() data, @Res() res) {
+    async statement(@Param() data: ReportValidation, @Res() res) {
         const result = await this.userReportService.getStatementReport(
             data.account,
             data.agency,
